@@ -1,45 +1,40 @@
 import 'dart:io';
 
-import 'package:ambathik/app/modules/classification_page/classification_controller.dart';
+import 'package:ambathik/app/data/models/history.dart';
+import 'package:ambathik/app/modules/not_identified/not_identified_controller.dart';
 import 'package:ambathik/app/shared/utils/app_gap.dart';
 import 'package:ambathik/app/shared/utils/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class ClassificationView extends StatelessWidget {
-  ClassificationView({super.key});
+class NotIdentifiedView extends StatelessWidget {
+  NotIdentifiedView({super.key});
 
-  final controller = Get.put(ClassificationController());
+  final controller = Get.put(NotIdentifiedController());
 
   @override
   Widget build(BuildContext context) {
     final arg = Get.arguments;
-    final List<dynamic> result = arg['prediction'];
     controller.setData(imageFile: arg['image'], result: arg['prediction']);
 
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(title: const Text('Hasil Klasifikasi')),
-        body: buildSingleChildScrollView(result),
-      ),
+          appBar: AppBar(title: const Text('Hasil Klasifikasi')),
+          body: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildImageSection(),
+                _buildTopPredictionSection(),
+                _buildDescription(),
+                AppGap.v(20),
+                _buildOtherPredictionsSection(),
+                AppGap.v(24),
+              ],
+            ),
+          )),
     );
-  }
-
-  Widget buildSingleChildScrollView(List<dynamic> result) {
-    return SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildImageSection(),
-            _buildTopPredictionSection(),
-            _buildDescription(),
-            AppGap.v(20),
-            _buildOtherPredictionsSection(result),
-            AppGap.v(24),
-          ],
-        ),
-      );
   }
 
   Widget _buildImageSection() {
@@ -61,24 +56,12 @@ class ClassificationView extends StatelessWidget {
   }
 
   Widget _buildTopPredictionSection() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text(
-            controller.topLabel,
-            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: Text(
-            'Tingkat Kepercayaan: ${(controller.topConfidence * 100).toStringAsFixed(2)}%',
-            style: const TextStyle(fontSize: 16, color: Colors.grey),
-          ),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Text(
+        "Can't Be Identified",
+        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
     );
   }
 
@@ -86,21 +69,21 @@ class ClassificationView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Text(
-        "${Constant.FILOSOFI[controller.topIndex]}",
+        "Batik tidak dapat diidentifikasi. Kemungkinan data batik belum tersedia atau gambar yang dimasukkan terlalu abstract untuk dikenali.",
         style: GoogleFonts.poppins(fontSize: 16),
         textAlign: TextAlign.justify,
       ),
     );
   }
 
-  Widget _buildOtherPredictionsSection(List<dynamic> result) {
+  Widget _buildOtherPredictionsSection() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
           padding: EdgeInsets.symmetric(horizontal: 16),
           child: Text(
-            'Prediksi Lainnya',
+            'Kemungkinan',
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
         ),
@@ -108,10 +91,10 @@ class ClassificationView extends StatelessWidget {
         SizedBox(
           height: 180,
           child: PageView.builder(
-            itemCount: result.length > 5 ? 4 : result.length - 1,
+            itemCount: controller.prediction.length,
             controller: PageController(viewportFraction: 0.8),
             itemBuilder: (context, index) {
-              final prediction = result[index + 1]; // skip index 0
+              final prediction = controller.prediction[index];
               final int labelIndex = prediction['labelIndex'];
               final String label =
                   Constant.LABEL[labelIndex] ?? "Tidak diketahui";

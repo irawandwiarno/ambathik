@@ -2,7 +2,9 @@ import 'package:ambathik/app/config/app_colors.dart';
 import 'package:ambathik/app/data/services/classification_service.dart';
 import 'package:ambathik/app/data/services/image_service.dart';
 import 'package:ambathik/app/modules/classification_page/classification_view.dart';
+import 'package:ambathik/app/modules/not_identified/not_identified_view.dart';
 import 'package:ambathik/app/shared/utils/app_spacing.dart';
+import 'package:ambathik/app/shared/utils/constant.dart';
 import 'package:ambathik/app/shared/utils/path_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,9 +37,9 @@ class MainMenuController extends GetxController {
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
           routes: {
-            "/first": (final context) => const HomeView(),
-            "/mid": (final context) => const HomeView(),
-            "/second": (final context) => const SettingPage(),
+            "/first": (final context) =>  HomeView(),
+            "/mid": (final context) =>  HomeView(),
+            "/second": (final context) => SettingPage(),
           },
         ),
       ),
@@ -69,12 +71,12 @@ class MainMenuController extends GetxController {
                   children: [
                     CardIconButton(Icons.image_outlined, "Gallery", () async {
                       image = await ImageService.pickFromGallery();
-                      pushToClasifyPage();
+                      pushToClassifyPage();
                     }),
                     CardIconButton(Icons.camera_alt_outlined, "Camera",
                         () async {
                       image = await ImageService.pickFromCamera();
-                      pushToClasifyPage();
+                      pushToClassifyPage();
                     }),
                   ],
                 ),
@@ -85,9 +87,9 @@ class MainMenuController extends GetxController {
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
           routes: {
-            "/first": (final context) => const HomeView(),
-            "/mid": (final context) => const HomeView(),
-            "/second": (final context) => const SettingPage(),
+            "/first": (final context) =>  HomeView(),
+            "/mid": (final context) =>  HomeView(),
+            "/second": (final context) => SettingPage(),
           },
         ),
       ),
@@ -99,18 +101,17 @@ class MainMenuController extends GetxController {
         routeAndNavigatorSettings: RouteAndNavigatorSettings(
           initialRoute: "/",
           routes: {
-            "/first": (final context) => const HomeView(),
-            "/mid": (final context) => const HomeView(),
-            "/second": (final context) => const SettingPage(),
+            "/first": (final context) => HomeView(),
+            "/mid": (final context) =>  HomeView(),
+            "/second": (final context) => SettingPage(),
           },
         ),
       ),
     ];
   }
 
-  void pushToClasifyPage() {
+  void pushToClassifyPage() {
     if (image != null) {
-      tfLite.loadModel(PathModel.INCEPTIONV3);
       tfLite.loadLabels(PathModel.LABELS);
       Get.back(); // Tutup dialog
       print("🖼️ Gambar dari galeri: ${image!.path}");
@@ -138,11 +139,40 @@ class MainMenuController extends GetxController {
       // Klasifikasi hasil segmentasi
       final result = await tfLite.classifyImage(bwImage);
 
+      var param = {
+        'image': image,
+        'prediction': result,
+      };
+
       print("✅ Hasil klasifikasi:");
       for (var res in result) {
-        print("Label: ${res['labelIndex']} - Confidence: ${res['confidence']}");
+        var indexLabel = res['labelIndex'];
+        print("Label: ${Constant.LABEL[indexLabel]} - Confidence: ${res['confidence']}");
       }
+
+      if(isIndentified(result)){
+        Get.to(ClassificationView(), arguments: param);
+      }else{
+        Get.to(NotIdentifiedView(), arguments: param);
+      }
+
+
+      //
+      // print("✅ Hasil klasifikasi:");
+      // for (var res in result) {
+      //   var indexLabel = res['labelIndex'];
+      //   print("Label: ${Constant.LABEL[indexLabel]} - Confidence: ${res['confidence']}");
+      // }
     }
+  }
+
+  bool isIndentified(result){
+    var confiden = result[0]['confidence'] * 100;
+    if(confiden > 50){
+      return true;
+    }
+
+    return false;
   }
 
   Widget CardIconButton(IconData icon, String title, VoidCallback onTap) {

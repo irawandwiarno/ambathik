@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 
-class ClassificationController extends GetxController {
+class NotIdentifiedController extends GetxController {
   late XFile image;
   late List<dynamic> prediction;
 
@@ -18,8 +18,6 @@ class ClassificationController extends GetxController {
     saveDataToDatabase(imageFile, result);
   }
 
-
-
   Map<String, dynamic> get topPrediction => prediction[0];
   int get topIndex => topPrediction['labelIndex'];
   String get topLabel => topPrediction['label'];
@@ -27,9 +25,11 @@ class ClassificationController extends GetxController {
 
   List<Map<String, dynamic>> get otherPredictions => prediction.length > 1
       ? prediction
-          .sublist(1, prediction.length.clamp(1, 5))
-          .cast<Map<String, dynamic>>()
+      .sublist(1, prediction.length.clamp(1, 5))
+      .cast<Map<String, dynamic>>()
       : [];
+
+
   void saveDataToDatabase(imageFile, result) {
     saveHistory(imageFile, result);
     var homeController = Get.find<HomeController>();
@@ -40,14 +40,9 @@ class ClassificationController extends GetxController {
     var newPath = await saveImageToAppDirectory(imageFile);
     var history = History.fromPredictionOutput(
         newPath, TFLiteService().modelName!, predictionOutput,
-        label: topLabel, isIdentified: true);
-    print(history.prediction);
+        label: "Can't Be Identified", isIdentified: false);
 
     DatabaseHelper().insertHistory(history);
-    List<History> histories = await DatabaseHelper().getAllHistory();
-    histories.forEach((item) {
-      print(item.imagePath);
-    });
 
     var homeC = Get.find<HomeController>();
     homeC.getHistory();

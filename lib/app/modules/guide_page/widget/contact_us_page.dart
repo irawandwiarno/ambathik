@@ -1,5 +1,6 @@
 import 'package:ambathik/app/config/app_colors.dart';
 import 'package:ambathik/app/config/app_text_style.dart';
+import 'package:ambathik/app/routes/app_routes.dart';
 import 'package:ambathik/app/shared/utils/app_gap.dart';
 import 'package:ambathik/app/shared/utils/app_spacing.dart';
 import 'package:flutter/material.dart';
@@ -85,7 +86,9 @@ class ContactUsPage extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color(0xFFC69553)
               ),
-                onPressed: () {},
+                onPressed: () {
+                Get.toNamed(AppRoutes.MAINMENU);
+                },
                 child: Container(
                   width: Get.width / 1.4,
                   child: Center(child: Text('Try Identify Batik Pattern', style: GoogleFonts.poppins(

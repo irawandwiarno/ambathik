@@ -1,44 +1,61 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'dart:math';
+import 'package:ambathik/app/shared/utils/constant.dart';
 import 'package:flutter/services.dart';
 import 'package:image/image.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:image/image.dart' as img;
 
 class TFLiteService {
+  static final TFLiteService _instance = TFLiteService._internal();
+  factory TFLiteService() => _instance;
+
+  TFLiteService._internal();
+
+
   Interpreter? _interpreter;
   String? _currentModel;
-  List<String>? _labels;
+  String? modelName;
+  Map<int, String>? _labels;
 
   /// Memuat model TFLite dari asset
-  Future<void> loadModel(String modelPath) async {
+  Future<bool> loadModel(String modelPath) async {
     await _unloadModel();
     try {
       _interpreter = await Interpreter.fromAsset(modelPath);
       _currentModel = modelPath;
       print('✅ Model loaded: $_currentModel');
+      return true;
     } catch (e) {
       print('❌ Error loading model: $e');
-      rethrow;
+      return false;
     }
   }
 
   /// Muat label dari file (optional)
   Future<void> loadLabels(String labelPath) async {
     try {
-      final raw = await rootBundle.loadString(labelPath);
-      _labels = raw.split('\n').map((e) => e.trim()).toList();
+      // final raw = await rootBundle.loadString(labelPath);
+      // _labels = raw.split('\n').map((e) => e.trim()).toList();
+   _labels = Constant.LABEL;
+
       print('✅ Labels loaded: ${_labels!.length}');
+
     } catch (e) {
       print('❌ Error loading labels: $e');
     }
   }
   /// Ganti model
-  Future<void> changeModel(String newModelPath) async {
+  Future<bool> changeModel(String newModelPath, String nameModel) async {
     if (_currentModel != newModelPath) {
-      await loadModel(newModelPath);
+      var res = await loadModel(newModelPath);
+      if(!res) return false;
+      this.modelName = nameModel;
+      return res;
     } else {
       print('ℹ️ Model already loaded.');
+      return true;
     }
   }
 
@@ -59,6 +76,14 @@ class TFLiteService {
 
     return _postprocessOutput(output[0]);
   }
+
+  List<double> applySoftmax(List<double> logits) {
+    final maxLogit = logits.reduce(max); // stabilisasi numerik
+    final expScores = logits.map((logit) => exp(logit - maxLogit)).toList();
+    final sumExp = expScores.reduce((a, b) => a + b);
+    return expScores.map((score) => score / sumExp).toList();
+  }
+
 
   /// Preprocessing gambar ke format [3, 224, 224] (CHW)
   List<List<List<double>>> _preprocessImageCHW(Image? image,
@@ -90,7 +115,9 @@ class TFLiteService {
 
   /// Ambil 5 output dengan confidence tertinggi
   List<Map<String, dynamic>> _postprocessOutput(List<double> output) {
-    final indexed = output.asMap().entries.toList()
+    final softmaxOutput = applySoftmax(output);
+
+    var indexed = softmaxOutput.asMap().entries.toList()
       ..sort((a, b) => b.value.compareTo(a.value));
 
     return indexed.take(5).map((e) {
