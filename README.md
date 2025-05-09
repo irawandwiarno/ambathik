@@ -10,31 +10,37 @@ Ambathik bertujuan untuk memperkenalkan kekayaan budaya Indonesia melalui batik 
 
 Berikut adalah beberapa motif batik yang saat ini telah berhasil diklasifikasikan oleh sistem:
 
-1. **Jagung Miji Emas (Bojonegoro)**  
+1. **Gajah Oling (Banyuwangi)**  
+    Merupakan motif khas Banyuwangi yang menjadi simbol kekuatan spiritual, perlindungan, dan hubungan antara manusia dengan Tuhan.
+
+2. **Gastro Rinonce**  
+    Motif klasik yang menggambarkan rangkaian bunga dan daun secara estetis. Melambangkan keindahan, kesabaran, dan nilai-nilai budaya luhur.
+
+3. **Jagung Miji Emas (Bojonegoro)**  
    Melambangkan hasil panen jagung yang melimpah, meningkatkan kesejahteraan masyarakat, dan menjadi alternatif pengganti beras.
 
-2. **Koi Blitar (Blitar)**  
+4. **Koi Blitar (Blitar)**  
    Simbol keberuntungan, kebahagiaan, dan gotong royong dalam masyarakat Blitar.
 
-3. **Lengko**  
+5. **Lengko**  
    Memadukan simbol gunungan, truntum, burung cendrawasih, dan bunga sebagai lambang keseimbangan hidup, cinta kasih, dan kemakmuran.
 
-4. **Lokcan (Indramayu)**  
+6. **Lokcan (Indramayu)**  
    Berasal dari budaya Tionghoa-Jawa, melambangkan keberuntungan, keabadian, dan keharmonisan antarbudaya.
 
-5. **Pace (Pacitan)**  
+7. **Pace (Pacitan)**  
    Melambangkan ketulusan, kesetiaan, dan semangat gotong royong, terinspirasi dari buah pace (mengkudu).
 
-6. **Pring Sedapur (Jawa Timur)**  
+8. **Pring Sedapur (Jawa Timur)**  
    Menggambarkan persatuan, ketahanan, kesederhanaan, dan semangat perjuangan seperti bambu.
 
-7. **Sekar Jati (Bojonegoro)**  
+9. **Sekar Jati (Bojonegoro)**  
    Simbol kekuatan, keteguhan, dan keindahan, terinspirasi dari pohon jati dan bunga.
 
-8. **Serat Kayu (Madura)**  
+10. **Serat Kayu (Madura)**  
    Motif alami yang meniru serat kayu, melambangkan keteguhan, kesederhanaan, dan spiritualitas.
 
-9. **Tumpal**  
+11 **Tumpal**  
    Motif segitiga yang melambangkan keselarasan, keseimbangan hidup, dan perlindungan dari bencana.
 
 ---
