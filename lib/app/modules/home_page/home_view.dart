@@ -9,6 +9,7 @@ import 'package:ambathik/app/shared/utils/app_spacing.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomeView extends StatelessWidget {
   HomeView({super.key});
@@ -54,7 +55,7 @@ class HomeView extends StatelessWidget {
 
   Widget buildNewsCarousel() {
     return Obx(() {
-      final news = controller.newsImages;
+      final news = controller.news;
 
       if (news.isEmpty) {
         return const SizedBox(
@@ -75,18 +76,27 @@ class HomeView extends StatelessWidget {
           enlargeCenterPage: true,
           viewportFraction: 0.8,
         ),
-        items: news.map((url) {
-          return ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              url,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Center(child: Icon(Icons.broken_image)),
+        items: news.map((item) {
+          return GestureDetector(
+            onTap: () async {
+              final Uri uri = Uri.parse(item.linkDirect);
+              if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+                throw 'Could not launch ${item.linkDirect}';
+              }
+            },
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Image.asset(
+                item.imgPath,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                errorBuilder: (context, error, stackTrace) =>
+                const Center(child: Icon(Icons.broken_image)),
+              ),
             ),
           );
-        }).toList(),
+        }).toList()
+        ,
       );
     });
   }

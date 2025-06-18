@@ -2,6 +2,7 @@ import 'package:ambathik/app/data/models/save_model_info.dart';
 import 'package:ambathik/app/data/services/classification_service.dart';
 import 'package:ambathik/app/data/services/database_helper.dart';
 import 'package:ambathik/app/data/services/preference_service.dart';
+import 'package:ambathik/app/data/services/tensorflowlite_services.dart';
 import 'package:ambathik/app/modules/guide_page/guide_binding.dart';
 import 'package:ambathik/app/modules/guide_page/guide_view.dart';
 import 'package:ambathik/app/modules/home_page/home_binding.dart';
@@ -17,11 +18,15 @@ import 'package:google_fonts/google_fonts.dart';
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await DatabaseHelper().database; // Inisialisasi dan pastikan DB dibuat
+  final tfliteService = TensorflowLiteServices();
+
   SavedModelInfo? savedModelInfo = await PreferenceService.getModelInfo();
   if(savedModelInfo == null){
     TFLiteService().changeModel(PathModel.INCEPTIONV3, 'InceptionV3');
+    tfliteService.loadModel(PathModel.INCEPTIONV3_512, modelName: 'InceptionV3');
   }else{
-    TFLiteService().changeModel(savedModelInfo.path, savedModelInfo.label);
+    tfliteService.loadModel(savedModelInfo.path, modelName: savedModelInfo.label);
+    // TFLiteService().changeModel(savedModelInfo.path, savedModelInfo.label);
   }
   await GoogleFonts.pendingFonts();
   runApp(const MyApp());
