@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:ambathik/app/data/models/history.dart';
 import 'package:ambathik/app/data/services/classification_service.dart';
 import 'package:ambathik/app/data/services/database_helper.dart';
+import 'package:ambathik/app/data/services/tensorflowlite_services.dart';
 import 'package:ambathik/app/modules/home_page/home_controller.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,7 +40,7 @@ class ClassificationController extends GetxController {
   void saveHistory(XFile imageFile, predictionOutput) async {
     var newPath = await saveImageToAppDirectory(imageFile);
     var history = History.fromPredictionOutput(
-        newPath, TFLiteService().modelName!, predictionOutput,
+        newPath, TensorflowLiteServices().modelName!, predictionOutput,
         label: topLabel, isIdentified: true);
     print(history.prediction);
 

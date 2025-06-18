@@ -16,12 +16,12 @@ class MainMenuPage extends GetView<MainMenuController> {
     return Scaffold(
       body: PersistentTabView(
         context,
-          navBarStyle: NavBarStyle.style15,
-          controller: controller.controllerNavBar,
-          screens: controller.screens,
-          items: controller.navBarsItems(),
+        padding: EdgeInsets.symmetric(vertical: 5),
+        navBarStyle: NavBarStyle.style15,
+        controller: controller.controllerNavBar,
+        screens: controller.screens,
+        items: controller.navBarsItems(),
       ),
     );
   }
-
 }
